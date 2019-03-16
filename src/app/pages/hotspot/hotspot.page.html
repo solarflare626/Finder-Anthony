@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar>
+      <ion-buttons slot="start">
+          <ion-back-button defaultHref="/home"></ion-back-button>
+        </ion-buttons>
+    <ion-title>Create Hotspot</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+<br>
+<br>
+<br>
+
+    <ion-item>
+        <ion-label>SSID: </ion-label>
+        <ion-input [(ngModel)]="ssid"></ion-input>
+    </ion-item>
+    <ion-item>
+        <ion-label>Password: </ion-label>
+        <ion-input [(ngModel)]="password"></ion-input>
+    </ion-item>
+<br>
+<br>
+<br>
+    <ion-button *ngIf="!started" [disabled]="disable" expand="full" (click)="start()">Start Hotspot</ion-button>
+    <ion-button *ngIf="started" [disabled]="!disable" expand="full" (click)="stop()">Stop Hotspot</ion-button>
+  
+</ion-content>

@@ -1,5 +1,7 @@
 {
   "name": "FinderAnthony",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

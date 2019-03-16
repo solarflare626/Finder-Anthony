@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar>
+      <ion-buttons slot="start">
+          <ion-back-button defaultHref="/home"></ion-back-button>
+        </ion-buttons>
+    <ion-title>Search Wifis</ion-title>
+    <ion-button fill="round" slot="end" (click)="scan()">
+      <ion-icon slot="icon-only" name="md-sync"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <!-- <ion-button (click)="select({SSID: 111})">scanner</ion-button> -->
+  <h2>Available Wifis:</h2>
+  <ion-card *ngFor="let wifi of wifis; let i=index" (click)="select(wifi)">
+    <ion-card-header>
+      <ion-card-title>{{wifi.SSID}}</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <span> BSSID: {{wifi.BSSID}}</span>
+      <span> frequency: {{wifi.frequency}}</span>
+      <span> level: {{wifi.level}}</span>
+      <span> distance: {{wifi.distance}}</span>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>
