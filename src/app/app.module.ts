@@ -10,6 +10,7 @@ import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { WifiScannerService } from './services/wifi-scanner.service';
+import { HotspotService } from './services/hotspot.service';
 import { ToastService } from './services/toast-service';
 @NgModule({
   declarations: [AppComponent],
@@ -21,6 +22,7 @@ import { ToastService } from './services/toast-service';
     AndroidPermissions,
     WifiScannerService,
     ToastService,
+    HotspotService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

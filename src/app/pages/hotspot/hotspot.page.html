@@ -25,5 +25,13 @@
 <br>
     <ion-button *ngIf="!started" [disabled]="disable" expand="full" (click)="start()">Start Hotspot</ion-button>
     <ion-button *ngIf="started" [disabled]="!disable" expand="full" (click)="stop()">Stop Hotspot</ion-button>
-  
+    <br>
+    <br>
+    <ion-row>
+    <ion-col text-center>
+        <span href="#">If creating hotspot fails:</span>
+    </ion-col>
+    </ion-row>
+    <ion-button expand="full" (click)="settings()">Open Wireless Settings</ion-button>
+    
 </ion-content>

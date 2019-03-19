@@ -12,17 +12,24 @@ declare var WifiWizard2: any;
 })
 export class WifilistPage implements OnInit {
 
-  public wifis: Array<any>;
+  public wifis: Array<any> = [];
   constructor(
     private wifiScanner: WifiScannerService,
-    private toastCtrl: ToastService,
+    private toastController: ToastService,
     public modalController: ModalController
   ) {}
 
   ngOnInit(){
-    this.scan();
+    
   }
 
+  ionViewDidEnter(){
+    this.toastController.presentToast({
+      message: "Scanning Wifi",
+      duration: 3000
+    });
+    this.scan();
+  }
   async presentModal(item) {
     const modal = await this.modalController.create({
       component: ScannerComponent,
@@ -43,15 +50,7 @@ export class WifilistPage implements OnInit {
       this.wifis = results;
     }).catch((e) => {
       WifiWizard2.disableWifi().then(() => {
-        this.toastCtrl.presentToast({
-          message: 'Disabling wifi.',
-          duration: 2000
-        });
         WifiWizard2.enableWifi().then(() => {
-          this.toastCtrl.presentToast({
-            message: 'Enabling wifi.',
-            duration: 2000
-          });
           this.scan()
         });
       });

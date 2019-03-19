@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Hotspot, HotspotNetwork } from '@ionic-native/hotspot/ngx';
+import { HotspotService } from '../../services/hotspot.service';
+// import { ToastController } from '@ionic/angular';
+import { ToastService } from '../../services/toast-service';
 @Component({
   selector: 'app-hotspot',
   templateUrl: './hotspot.page.html',
@@ -7,24 +9,33 @@ import { Hotspot, HotspotNetwork } from '@ionic-native/hotspot/ngx';
 })
 export class HotspotPage implements OnInit {
 
-  private ssid: string = "Find Me Anthony";
-  private mode: string = 'WPA';
-  private password: string = "12345678"
+  public ssid: string = "Find Me Anthony";
+  public mode: string = 'WPA_PSK';
+  public password: string = "12345678"
 
-  private disable:boolean = false;
-  private started: boolean= false;
-  constructor(private hotspot: Hotspot) { }
+  public disable:boolean = false;
+  public started: boolean= false;
+  constructor(public hotspot: HotspotService,public toastController: ToastService) { }
 
   ngOnInit() {
   }
 
+  
   start(){
     this.disable = true;
     this.hotspot.createHotspot(this.ssid, this.mode,this.password).then((r)=>{
       this.started = true;
-    }).catch(e=>{
+    }).catch((e)=>{
+      this.toastController.presentToast({
+        message: e,
+        duration: 3000
+      });
       this.disable = false;
     });
+  }
+
+  settings(){
+    this.hotspot.openWireless();
   }
 
   stop(){

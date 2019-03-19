@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NavParams, ModalController } from '@ionic/angular';
-import { NativeAudio } from '@ionic-native/native-audio/ngx';
 import { WifiScannerService } from 'src/app/services/wifi-scanner.service';
 import { ToastService } from 'src/app/services/toast-service';
+import { AudioService } from 'src/app/services/audio.service';
 var num = "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen".split(" ");
 var tens = "twenty thirty forty fifty sixty seventy eighty ninety".split(" ");
 
@@ -24,50 +24,51 @@ export class ScannerComponent implements OnInit {
   public wifi: any;
   public style = 'pulsating-circle';
   public distance: any;
-  public speed: any = 10;
+  public speed: any = 11;
   public interval: any;
   public scan_interval: any;
   public scanning: boolean = false;
+  private leaving: boolean = false;
+  private nOutOfRange: number = 0;
   constructor(
     private navParams: NavParams,
     private modal: ModalController,
-    private audio: NativeAudio,
+    private audio: AudioService,
     private toastCtrl: ToastService,
     private wifiScanner: WifiScannerService) { }
   
   ngOnInit() {
     this.wifi = this.navParams.get("wifi");
     // alert(this.wifi);
-    this.audio.preloadSimple('beep', 'assets/sounds/beep.mp3').then(() => {
 
       this.interval = setInterval(() => {
         this.audio.play('beep');
+        if(this.leaving){
+          clearTimeout(this.interval);
+          clearTimeout(this.scan_interval);
+        }
       }, ((this.speed * 0.1) + 0.1) * 1000);
 
-    }, (e) => {
-      alert(e);
-    });
+
     
     this.scan_interval = setInterval(()=>{
-      if(!this.scanning){
+      if(!this.scanning && !this.leaving){
         this.scanning = true;
         this.wifiScanner.scanAndGetDistance(this.wifi.BSSID,(err,data)=>{
           if(!err && data){
+            this.nOutOfRange = 0;
             this.distance = data;
             this.calculateSpeed();
           }else if(err == "not found"){
-            alert("Wifi is now out of range");
+            this.nOutOfRange++;
+            if(this.nOutOfRange > 1){
+              this.distance= null;
+              alert("Wifi is now out of range");
+            }
           }else if(err == "failed"){
             WifiWizard2.disableWifi().then(() => {
-              this.toastCtrl.presentToast({
-                message: 'Disabling wifi.',
-                duration: 2000
-              });
               WifiWizard2.enableWifi().then(() => {
-                this.toastCtrl.presentToast({
-                  message: 'Enabling wifi.',
-                  duration: 2000
-                });
+                
               });
             });
           }
@@ -77,7 +78,7 @@ export class ScannerComponent implements OnInit {
       }
       
 
-    },2000);
+    },5000);
 
     
 
@@ -85,6 +86,7 @@ export class ScannerComponent implements OnInit {
 
   }
   ionViewWillLeave(){
+    this.leaving= true;
     clearTimeout(this.interval);
     clearTimeout(this.scan_interval);
 
@@ -104,7 +106,12 @@ export class ScannerComponent implements OnInit {
     this.style = number2words(this.speed);
     console.log("this.speed:", this.speed);
     this.interval = setInterval(() => {
+      
       this.audio.play('beep');
+      if(this.leaving){
+        clearTimeout(this.interval);
+        clearTimeout(this.scan_interval);
+      }
     }, ((this.speed * 0.1) + 0.1) * 1000);
   }
 
