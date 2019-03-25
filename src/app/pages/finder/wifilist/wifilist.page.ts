@@ -3,6 +3,8 @@ import { WifiScannerService } from '../../../services/wifi-scanner.service';
 import { ToastService } from '../../../services/toast-service';
 import { ModalController } from '@ionic/angular';
 import { ScannerComponent } from 'src/app/components/scanner/scanner.component';
+import { StorageService } from 'src/app/services/storage.service';
+import { WifiListTutorialComponent } from 'src/app/components/wifi-list-tutorial/wifi-list-tutorial.component';
 
 declare var WifiWizard2: any;
 @Component({
@@ -16,18 +18,26 @@ export class WifilistPage implements OnInit {
   constructor(
     private wifiScanner: WifiScannerService,
     private toastController: ToastService,
-    public modalController: ModalController
+    public modalController: ModalController,
+    public storageService: StorageService
   ) {}
 
   ngOnInit(){
-    
+    setTimeout(()=>{ 
+      if(!this.storageService.tut_wifilist){
+      this.presentTutorialModal();
+     }
+    },2000);
+   
+  }
+  async presentTutorialModal() {
+    const modal = await this.modalController.create({
+      component:WifiListTutorialComponent
+    });
+    return await modal.present();
   }
 
   ionViewDidEnter(){
-    this.toastController.presentToast({
-      message: "Scanning Wifi",
-      duration: 3000
-    });
     this.scan();
   }
   async presentModal(item) {

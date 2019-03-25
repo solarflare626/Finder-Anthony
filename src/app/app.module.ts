@@ -12,10 +12,13 @@ import { AppRoutingModule } from './app-routing.module';
 import { WifiScannerService } from './services/wifi-scanner.service';
 import { HotspotService } from './services/hotspot.service';
 import { ToastService } from './services/toast-service';
+import { StorageService } from './services/storage.service';
+import { ModalService } from './services/modal.service';
+import { IonicStorageModule } from '@ionic/storage';
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
+  imports: [BrowserModule, IonicModule.forRoot(), IonicStorageModule.forRoot(), AppRoutingModule],
   providers: [
     StatusBar,
     SplashScreen,
@@ -23,6 +26,8 @@ import { ToastService } from './services/toast-service';
     WifiScannerService,
     ToastService,
     HotspotService,
+    StorageService,
+    ModalService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

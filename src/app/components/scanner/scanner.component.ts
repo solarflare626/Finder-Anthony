@@ -3,6 +3,8 @@ import { NavParams, ModalController } from '@ionic/angular';
 import { WifiScannerService } from 'src/app/services/wifi-scanner.service';
 import { ToastService } from 'src/app/services/toast-service';
 import { AudioService } from 'src/app/services/audio.service';
+import { ScannerTutorialComponent } from '../scanner-tutorial/scanner-tutorial.component';
+import { StorageService } from 'src/app/services/storage.service';
 var num = "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen".split(" ");
 var tens = "twenty thirty forty fifty sixty seventy eighty ninety".split(" ");
 
@@ -30,63 +32,85 @@ export class ScannerComponent implements OnInit {
   public scanning: boolean = false;
   private leaving: boolean = false;
   private nOutOfRange: number = 0;
+  public tut_modal;
   constructor(
     private navParams: NavParams,
     private modal: ModalController,
     private audio: AudioService,
     private toastCtrl: ToastService,
-    private wifiScanner: WifiScannerService) { }
-  
+    private wifiScanner: WifiScannerService,
+    public modalController: ModalController,
+    public storageService: StorageService) { }
+
   ngOnInit() {
     this.wifi = this.navParams.get("wifi");
-    // alert(this.wifi);
-
-      this.interval = setInterval(() => {
-        this.audio.play('beep');
-        if(this.leaving){
-          clearTimeout(this.interval);
-          clearTimeout(this.scan_interval);
-        }
-      }, ((this.speed * 0.1) + 0.1) * 1000);
-
-
+    if (!this.storageService.tut_scanner) {
+      this.leaving = true;
+      this.tut_modal = this.presentModal();
+    }else{
+      this.init;
+    }
     
-    this.scan_interval = setInterval(()=>{
-      if(!this.scanning && !this.leaving){
+    // alert(this.wifi);
+  }
+
+  init() {
+
+    this.interval = setInterval(() => {
+      this.audio.play('beep');
+      if (this.leaving) {
+        clearTimeout(this.interval);
+        clearTimeout(this.scan_interval);
+      }
+    }, ((this.speed * 0.1) + 0.1) * 1000);
+
+
+
+    this.scan_interval = setInterval(() => {
+      if (!this.scanning && !this.leaving) {
         this.scanning = true;
-        this.wifiScanner.scanAndGetDistance(this.wifi.BSSID,(err,data)=>{
-          if(!err && data){
+        this.wifiScanner.scanAndGetDistance(this.wifi.BSSID, (err, data) => {
+          if (!err && data) {
             this.nOutOfRange = 0;
             this.distance = data;
             this.calculateSpeed();
-          }else if(err == "not found"){
+          } else if (err == "not found") {
             this.nOutOfRange++;
-            if(this.nOutOfRange > 1){
-              this.distance= null;
+            if (this.nOutOfRange > 1) {
+              this.distance = null;
               alert("Wifi is now out of range");
             }
-          }else if(err == "failed"){
+          } else if (err == "failed") {
             WifiWizard2.disableWifi().then(() => {
               WifiWizard2.enableWifi().then(() => {
-                
+
               });
             });
           }
           this.scanning = false;
-    
+
         });
       }
-      
 
-    },5000);
 
-    
-
+    }, 5000);
 
 
   }
-  ionViewWillLeave(){
-    this.leaving= true;
+
+
+  async presentModal() {
+    const modal = await this.modalController.create({
+      component: ScannerTutorialComponent
+    });
+    await modal.present();
+    var data = await modal.onDidDismiss()
+    this.leaving = false;
+    this.init();
+    return;
+  }
+  ionViewWillLeave() {
+    this.leaving = true;
     clearTimeout(this.interval);
     clearTimeout(this.scan_interval);
 
@@ -99,23 +123,23 @@ export class ScannerComponent implements OnInit {
       this.speed = 10;
     else if (speed < 0) {
       this.speed = 0;
-    }else{
+    } else {
       this.speed = speed;
     }
 
     this.style = number2words(this.speed);
     console.log("this.speed:", this.speed);
     this.interval = setInterval(() => {
-      
+
       this.audio.play('beep');
-      if(this.leaving){
+      if (this.leaving) {
         clearTimeout(this.interval);
         clearTimeout(this.scan_interval);
       }
     }, ((this.speed * 0.1) + 0.1) * 1000);
   }
 
-  
+
   back() {
     this.modal.dismiss();
   }

@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-button fill="clear"  (click)="back()" slot="start" >
+        <ion-icon slot="icon-only" name="md-arrow-back"></ion-icon>
+    </ion-button>
+    <ion-title>Tutorial</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+<br>
+<br>
+<br>
+
+    <ion-item>
+        <ion-label>SSID: </ion-label>
+        <ion-input [(ngModel)]="ssid"></ion-input>
+    </ion-item>
+    <ion-item>
+        <ion-label>Password: </ion-label>
+        <ion-input [(ngModel)]="password"></ion-input>
+    </ion-item>
+<br>
+<br>
+<br>
+<ion-button expand="full" data-balloon-length="fit" data-balloon-visible data-balloon="Click here to start hotspot based on the settings provided" data-balloon-pos="up">Start Hotspot</ion-button>
+ 
+    <br>
+    <br>
+    <ion-row>
+    <ion-col text-center>
+        <span href="#">If creating hotspot fails:</span>
+    </ion-col>
+    </ion-row>
+    <ion-button expand="full" data-balloon-length="fit" data-balloon-visible data-balloon="Click here to open wireless settings if hotspot creation fails" data-balloon-pos="down">Open Wireless Settings</ion-button>
+    <br>
+    <br>
+    <br>
+    <br>
+    <ion-button expand="full" (click)="back()" color="success" >Ok</ion-button>
+    
+</ion-content>

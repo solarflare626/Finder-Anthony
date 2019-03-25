@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { HotspotService } from '../../services/hotspot.service';
 // import { ToastController } from '@ionic/angular';
 import { ToastService } from '../../services/toast-service';
+import { ModalController } from '@ionic/angular';
+import { StorageService } from 'src/app/services/storage.service';
+import { HotspotTutorialComponent } from 'src/app/components/hotspot-tutorial/hotspot-tutorial.component';
 @Component({
   selector: 'app-hotspot',
   templateUrl: './hotspot.page.html',
@@ -15,9 +18,23 @@ export class HotspotPage implements OnInit {
 
   public disable:boolean = false;
   public started: boolean= false;
-  constructor(public hotspot: HotspotService,public toastController: ToastService) { }
+  constructor(public hotspot: HotspotService,public toastController: ToastService,
+    public modalController: ModalController,
+    public storageService: StorageService) { }
 
   ngOnInit() {
+    setTimeout(()=>{ 
+      if(!this.storageService.tut_hotspot){
+        this.presentModal();
+       }
+    },2000);
+    
+  }
+  async presentModal() {
+    const modal = await this.modalController.create({
+      component: HotspotTutorialComponent
+    });
+    return await modal.present();
   }
 
   
