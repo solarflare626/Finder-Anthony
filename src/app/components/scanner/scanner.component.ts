@@ -48,7 +48,7 @@ export class ScannerComponent implements OnInit {
       this.leaving = true;
       this.tut_modal = this.presentModal();
     }else{
-      this.init;
+      this.init();
     }
     
     // alert(this.wifi);
